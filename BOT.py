@@ -75,7 +75,7 @@ async def board(ctx):
         for clan in clanlist:
             send = "\n".join(f'{b}' for a, b in enumerate(clanlist, 1))
             abc = await place.send(send)
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
             await abc.delete()
             #id = abc.id
             #listofids.append(id)
