@@ -1,1 +1,1 @@
-$ web: gunicorn cocboard.wsgi
+web: python -python C:\Users\Jerry\cocboard\BOT.py
