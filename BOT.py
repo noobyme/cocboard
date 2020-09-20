@@ -4,18 +4,27 @@ from cocapi import CocApi
 from dotenv import load_dotenv
 from discord.ext import commands
 import os
+import re
+
 
 load_dotenv()
 TOKEN1 = os.getenv('DISCORD_TOKEN')
-
-bot = commands.Bot(command_prefix='|')
-
-clantags = []
 GUILD = os.getenv('DISCORD_GUILD')
-token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjA5OTA5Nzc1LWVkM2UtNDk3ZC05Mjg1LTc0YzQyNzViNjM4NyIsImlhdCI6MTYwMDUwMDgzMiwic3ViIjoiZGV2ZWxvcGVyLzc4MjEyYjViLTAyMjgtNmMyMS1mMDMyLThlNDNlNzZlMTZjMCIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEyMi41Ny4wLjExOSJdLCJ0eXBlIjoiY2xpZW50In1dfQ.yQzJnfE8gmeuVzG09qZC-QdvuzdWVU00N4lCXCMKMRdj69BWGfXlpcqxEbNsZw3Wvz8-1vWq-0ivqc2dYZceLg'
+token = os.getenv('token')
+
+fileopen = open("list.txt", "r")
+file = fileopen.read()
+print(file + "17")
+clantags = re.sub("[^#\w]", " ",  file).split()
+print(clantags)
+print("20")
+taglist = []
+fileopen.close()
+
 timeout = 1  # requests timeout
 api = CocApi(token, timeout)
 
+bot = commands.Bot(command_prefix='|')
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
@@ -35,8 +44,18 @@ async def add(ctx, arg):
         if len(var) < 4:
             print("notFound")
         else:
-            clantags.append(arg[0:])
+            clantags.append(str(arg[0:]))
+            tagstring = ' '.join(clantags)
+            fileopen = open("list.txt", "w")
+            fileopen.write("\"" + str(tagstring) + "\"")
+            fileopen.close()
+            print("52")
+            print(taglist)
+            print(tagstring)
+            print(file)
             print(clantags)
+
+
 global clanlist
 clanlist = []
 @bot.command()
@@ -61,13 +80,16 @@ async def board(ctx):
     place = ctx.channel
     ii = 1
     while ii ==  1:
+        fileopen = open("list.txt", "r")
+        file = fileopen.read()
+        clantags = re.sub("[^\w]", " ", file).split()
         for clantag in clantags:
-            var1 = api.clan_tag(clantag)
+            var1 = api.clan_tag("#"+clantag)
             name = var1["name"]
             level = var1["clanLevel"]
             cwl = var1["warLeague"]["name"]
             members = var1['members']
-            link = 'https://link.clashofclans.com/en?action=OpenClanProfile&tag=' + str(clantag[1:])
+            link = 'https://link.clashofclans.com/en?action=OpenClanProfile&tag=' + str(clantag[0:])
             dilist = [name + ' | Level:' + str(level), 'Members:' + str(members) + ' | ' + cwl, link]
             answers = "\n".join(f'{b}' for a, b in enumerate(dilist, 1))
 
@@ -77,9 +99,11 @@ async def board(ctx):
             abc = await place.send(send)
             await asyncio.sleep(60)
             await abc.delete()
+            print("102")
             #id = abc.id
             #listofids.append(id)
         clanlist = []
+
     #for msgid in listofids:
         #await bot.delete_message(msgid)
         #listofids = []
@@ -88,7 +112,17 @@ async def board(ctx):
 @bot.command()
 async def remove(ctx, arg):
     global clantags
+    print("116")
+    print(clantags)
+    print(taglist)
     if arg in clantags:
         clantags.remove(arg)
+        var2 = ' '.join(clantags)
+        print(var2 + "121")
+        fileopen = open("list.txt", "w")
+        fileopen.write("\"" + str(var2) + "\"")
+        fileopen.close()
+        print("126")
+        print(clantags)
 
 bot.run(TOKEN1)
