@@ -97,7 +97,7 @@ async def board(ctx):
         for clan in clanlist:
             send = "\n".join(f'{b}' for a, b in enumerate(clanlist, 1))
             abc = await place.send(send)
-            await asyncio.sleep(60)
+            await asyncio.sleep(3600)
             await abc.delete()
             print("102")
             #id = abc.id
