@@ -1,1 +1,1 @@
-web: python -python C:\Users\Jerry\cocboard\BOT.py
+worker: python BOT.py
